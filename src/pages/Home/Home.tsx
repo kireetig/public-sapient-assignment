@@ -1,6 +1,6 @@
 import React from 'react';
 import style from './home.module.scss';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { LineChart } from './components/LineChart/LineChart';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatcher } from '../../store/actions';
@@ -9,27 +9,25 @@ import { InitialState } from '../../store/reducer';
 interface HomeProps {}
 
 interface StateProps {
-    news: any;
-}
-
-function useQuery() {
-  return new URLSearchParams(useLocation().search);
+  news: any;
 }
 
 export const Home: React.FC<HomeProps> = (props) => {
-  const query = useQuery();
+  const { pageNumber } = useParams();
   const history = useHistory();
   const dispatch = useDispatch();
   const rootDispatcher = new RootDispatcher(dispatch);
-  const {news} = useSelector<InitialState, StateProps>((state: InitialState) => {
-    return {
-       news: state.news
+  const { news } = useSelector<InitialState, StateProps>(
+    (state: InitialState) => {
+      return {
+        news: state.news,
+      };
     }
-});
+  );
 
   const pageChange = (prev: boolean) => {
-    const page = (Number(query.get('page')) || 0) + (prev ? -1 : 1);
-    history.push(`${window.location.pathname}?page=${page !== -1 ? page : 0}`);
+    const page = Number(pageNumber) + (prev ? -1 : 1);
+    history.push(`/${page > 0 ? page : 0}/page`);
   };
 
   const getTimeDiff = (date: any) => {
@@ -84,10 +82,9 @@ export const Home: React.FC<HomeProps> = (props) => {
     return hostname;
   };
 
-
   React.useEffect(() => {
-    rootDispatcher.getNews(Number(query.get('page')) || 0);
-  }, [query.get('page')]);
+    rootDispatcher.getNews(Number(pageNumber));
+  }, [pageNumber]);
 
   return (
     <div>
@@ -103,7 +100,10 @@ export const Home: React.FC<HomeProps> = (props) => {
             <tr key={item.objectID}>
               <td>{item?.num_comments || 0}</td>
               <td>{item?.voteCount || 0}</td>
-              <td onClick={() => rootDispatcher.changeCount(item, news)} className={style.vote}>
+              <td
+                onClick={() => rootDispatcher.changeCount(item, news)}
+                className={style.vote}
+              >
                 &#9650;
               </td>
               <td>
@@ -113,7 +113,11 @@ export const Home: React.FC<HomeProps> = (props) => {
                 <span className={style.by}>
                   <span className={style.grey}>
                     {item.url ? (
-                      <a href={item.url} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         ({extractHostname(item.url)})
                       </a>
                     ) : (

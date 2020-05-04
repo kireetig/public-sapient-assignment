@@ -1,6 +1,11 @@
 import { Dispatch } from 'redux';
 import { DispatchAction, ActionType } from './reducer';
 
+export enum StorageConstants {
+  HIDDENITEMS = 'hiddenList',
+  VOTECOUNT = 'voteCount',
+}
+
 export class RootDispatcher {
   private readonly dispatch: Dispatch<DispatchAction>;
 
@@ -13,9 +18,22 @@ export class RootDispatcher {
       .then((res) => res.json())
       .then((res) => {
         const hiddenItems = this.getHiddenItem();
-        const hits = res.hits.filter(
-          (hit: any) => hiddenItems.indexOf(hit.objectID) === -1
-        );
+        const voteCount = this.getStoredVoteCount();
+
+        const hits: any = [];
+        res.hits.map((hit: any) => {
+          if (hiddenItems.indexOf(hit.objectID) === -1) {
+            const i = voteCount.findIndex(
+              (v: any) => v.objectID === hit.objectID
+            );
+            if (i === -1) {
+              hit.voteCount = 0;
+            } else {
+              hit.voteCount = voteCount[i].voteCount;
+            }
+            hits.push(hit);
+          }
+        });
         this.dispatch({ type: ActionType.UpdateNews, payload: hits });
       });
   };
@@ -25,11 +43,15 @@ export class RootDispatcher {
   };
 
   changeCount = (item: any, news: any) => {
-    if (item.voteCount) {
-      item.voteCount++;
+    item.voteCount++;
+    const votes = this.getStoredVoteCount();
+    const vi = votes.findIndex((v: any) => v.objectID === item.objectID);
+    if (vi === -1) {
+      votes.push({ objectID: item.objectID, voteCount: item.voteCount });
     } else {
-      item.voteCount = 1;
+      votes[vi].voteCount = item.voteCount;
     }
+    localStorage.setItem(StorageConstants.VOTECOUNT, JSON.stringify(votes));
 
     const i = news.findIndex((d: any) => d.objectID === item.objectID);
 
@@ -39,7 +61,7 @@ export class RootDispatcher {
   };
 
   getHiddenItem = () => {
-    const hl = localStorage.getItem('hiddenList');
+    const hl = localStorage.getItem(StorageConstants.HIDDENITEMS);
     if (hl === null) {
       return [];
     } else {
@@ -47,10 +69,19 @@ export class RootDispatcher {
     }
   };
 
+  getStoredVoteCount = () => {
+    const vc = localStorage.getItem(StorageConstants.VOTECOUNT);
+    if (vc === null) {
+      return [];
+    } else {
+      return JSON.parse(vc);
+    }
+  };
+
   hideItem = (id: string, news: any) => {
     const hide = this.getHiddenItem();
     hide.push(id);
-    localStorage.setItem('hiddenList', JSON.stringify(hide));
+    localStorage.setItem(StorageConstants.HIDDENITEMS, JSON.stringify(hide));
     const i = news.findIndex((d: any) => d.objectID === id);
     const newData: any = [...news];
     newData.splice(i, 1);

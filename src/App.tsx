@@ -1,19 +1,16 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.scss';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { Home } from './pages/Home/Home';
+import { Redirect } from 'react-router-dom';
+import { renderRoutes } from 'react-router-config';
+import Routes from './Routes';
 
 function App() {
   return (
     <>
-      <Router>
-        <div className="container">
-        <Switch>
-          <Route path="/" component={Home} />
-        </Switch>
-        </div>
-      </Router>
+      <div className="container">
+        <div>{renderRoutes(Routes)}</div>
+        <Redirect to={'/0/page'}/>
+      </div>
     </>
   );
 }
