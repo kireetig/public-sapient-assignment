@@ -7,7 +7,7 @@ const StorageConstants = {
 
 export const getNews = (page) => async (dispatch) => {
   const response = await axios.get(
-    `http://hn.algolia.com/api/v1/search?page=${page || 0}`
+    `https://hn.algolia.com/api/v1/search?page=${page || 0}`
   );
   const res = await getHits(response.data);
 
