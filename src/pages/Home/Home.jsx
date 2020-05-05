@@ -3,36 +3,26 @@ import style from './home.module.scss';
 import { useHistory, useParams } from 'react-router-dom';
 import { LineChart } from './components/LineChart/LineChart';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootDispatcher } from '../../store/actions';
-import { InitialState } from '../../store/reducer';
+import { getNews, changeCount, hideItem } from '../../store/actions';
 
-interface HomeProps {}
-
-interface StateProps {
-  news: any;
-}
-
-export const Home: React.FC<HomeProps> = (props) => {
+export const Home = (props) => {
   const { pageNumber } = useParams();
   const history = useHistory();
   const dispatch = useDispatch();
-  const rootDispatcher = new RootDispatcher(dispatch);
-  const { news } = useSelector<InitialState, StateProps>(
-    (state: InitialState) => {
-      return {
-        news: state.news,
-      };
-    }
-  );
+  const { news } = useSelector((state) => {
+    return {
+      news: state.news,
+    };
+  });
 
-  const pageChange = (prev: boolean) => {
+  const pageChange = (prev) => {
     const page = Number(pageNumber) + (prev ? -1 : 1);
     history.push(`/${page > 0 ? page : 0}/page`);
   };
 
-  const getTimeDiff = (date: any) => {
-    const now: any = new Date();
-    const date1: any = new Date(date);
+  const getTimeDiff = (date) => {
+    const now = new Date();
+    const date1 = new Date(date);
     const seconds = Math.floor((now - date1) / 1000);
 
     let interval = Math.floor(seconds / 31536000);
@@ -59,7 +49,7 @@ export const Home: React.FC<HomeProps> = (props) => {
     return Math.floor(seconds) + ' seconds';
   };
 
-  const extractHostname = (url: string) => {
+  const extractHostname = (url) => {
     if (url === null) {
       return '';
     }
@@ -83,7 +73,7 @@ export const Home: React.FC<HomeProps> = (props) => {
   };
 
   React.useEffect(() => {
-    rootDispatcher.getNews(Number(pageNumber));
+    dispatch(getNews(Number(pageNumber)));
   }, [pageNumber]);
 
   return (
@@ -96,12 +86,12 @@ export const Home: React.FC<HomeProps> = (props) => {
             <td>UpVote</td>
             <td>News Details</td>
           </tr>
-          {news.map((item: any) => (
+          {news.map((item) => (
             <tr key={item.objectID}>
               <td>{item?.num_comments || 0}</td>
               <td>{item?.voteCount || 0}</td>
               <td
-                onClick={() => rootDispatcher.changeCount(item, news)}
+                onClick={() => dispatch(changeCount(item, news))}
                 className={style.vote}
               >
                 &#9650;
@@ -132,7 +122,7 @@ export const Home: React.FC<HomeProps> = (props) => {
                   </span>
                   <span
                     className={style.clickable}
-                    onClick={() => rootDispatcher.hideItem(item.objectID, news)}
+                    onClick={() => dispatch(hideItem(item.objectID, news))}
                   >
                     <span className={style.grey}>[</span>hide
                     <span className={style.grey}> ]</span>
