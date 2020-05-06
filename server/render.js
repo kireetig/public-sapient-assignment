@@ -6,6 +6,7 @@ import { renderRoutes } from 'react-router-config';
 import Routes from '../src/Routes';
 import { Provider } from 'react-redux';
 import { StaticRouter } from 'react-router';
+import { Helmet } from 'react-helmet';
 
 export default (req, res, store) => {
   const state = store.getState();
@@ -19,10 +20,17 @@ export default (req, res, store) => {
       </Provider>
     );
 
+    const helmet = Helmet.renderStatic();
+
     // read the final HTML from build folder (index.html)
     fs.readFile(path.resolve('build/index.html'), 'utf8', (err, data) => {
       if (!err) {
         const html = data
+          .replace(
+            '<meta/>',
+            `${helmet.title.toString()}
+        ${helmet.meta.toString()}`
+          )
           .replace('<div id="root"></div>', `<div id="root">${app}</div>`)
           .replace(
             '<script></script>',
@@ -32,7 +40,6 @@ export default (req, res, store) => {
       }
     });
   } catch (err) {
-    console.log('3');
     fs.readFile(path.resolve('build/index.html'), 'utf8', (err, data) => {
       if (!err) {
         const html = data;

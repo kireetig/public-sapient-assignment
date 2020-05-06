@@ -5,6 +5,7 @@ import { LineChart } from './components/LineChart/LineChart';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNews, changeCount, hideItem } from '../../store/actions';
 import { getParams } from '../../utils/getParams';
+import { Helmet } from 'react-helmet';
 
 export const Home = (props) => {
   const history = useHistory();
@@ -79,6 +80,10 @@ export const Home = (props) => {
 
   return (
     <div>
+      <Helmet>
+        <title>Kireeti News page ${pageNumber}</title>
+        <meta name="description" content="Helmet application" />
+      </Helmet>
       <table className={style.table}>
         <tbody className={'d-flex w-100'}>
           <tr className={style.head}>
