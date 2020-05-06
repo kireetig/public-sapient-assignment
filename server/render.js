@@ -27,7 +27,7 @@ export default (req, res, store) => {
       if (!err) {
         const html = data
           .replace(
-            '<meta/>',
+            '<meta />',
             `${helmet.title.toString()}
         ${helmet.meta.toString()}`
           )

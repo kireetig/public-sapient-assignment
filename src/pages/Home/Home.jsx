@@ -81,8 +81,11 @@ export const Home = (props) => {
   return (
     <div>
       <Helmet>
-        <title>Kireeti News page ${pageNumber}</title>
-        <meta name="description" content="Helmet application" />
+        <title>Kireeti News page {pageNumber}</title>
+        <meta
+          name="description"
+          content={`This is kireeti webpage you are in ${pageNumber}`}
+        />
       </Helmet>
       <table className={style.table}>
         <tbody className={'d-flex w-100'}>
