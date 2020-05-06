@@ -147,7 +147,7 @@ export const Home = (props) => {
             </span>
           </div>
         </div>
-      </>
+      </div>
       <LineChart data={news} />
     </div>
   );
