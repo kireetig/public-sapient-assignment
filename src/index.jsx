@@ -14,7 +14,9 @@ delete window.__REDUX_STATE__;
 
 const store = createStore(rootReducer, preloadState, applyMiddleware(thunk));
 
-ReactDOM.hydrate(
+const renderMethod = module.hot ? ReactDOM.render : ReactDOM.hydrate;
+
+renderMethod(
   <React.StrictMode>
     <Provider store={store}>
       <Router>

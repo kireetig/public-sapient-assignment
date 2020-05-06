@@ -1,14 +1,15 @@
 import React from 'react';
 import style from './home.module.scss';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { LineChart } from './components/LineChart/LineChart';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNews, changeCount, hideItem } from '../../store/actions';
+import { getParams } from '../../utils/getParams';
 
 export const Home = (props) => {
-  const { pageNumber } = useParams();
   const history = useHistory();
   const dispatch = useDispatch();
+  const { pageNumber } = getParams(history.location.pathname);
   const { news } = useSelector((state) => {
     return {
       news: state.news,
@@ -133,7 +134,7 @@ export const Home = (props) => {
           ))}
         </tbody>
       </table>
-      <div className={style.dflex}>
+      <div className={style.ctn}>
         <div className={style.mlauto}>
           <span className={style.clickable} onClick={() => pageChange(true)}>
             Previous

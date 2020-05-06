@@ -7,7 +7,7 @@ const StorageConstants = {
 
 export const getNews = (page) => async (dispatch) => {
   const response = await axios.get(
-    `https://hn.algolia.com/api/v1/search?page=${page || 0}`
+    `http://hn.algolia.com/api/v1/search?page=${page || 0}`
   );
   const res = await getHits(response.data);
 
@@ -33,11 +33,7 @@ export const getHits = async (res) => {
   );
 };
 
-export const updateNews = (data) => {
-  return { type: 'UpdateNews', payload: data };
-};
-
-export const changeCount = (item, news) => {
+export const changeCount = (item, news) => (dispatch) => {
   item.voteCount++;
   const votes = getStoredVoteCount();
   const vi = votes.findIndex((v) => v.objectID === item.objectID);
@@ -52,7 +48,7 @@ export const changeCount = (item, news) => {
 
   const newData = [...news];
   newData[i] = item;
-  updateNews(newData);
+  dispatch({ type: 'UpdateNews', payload: newData });
 };
 
 export const getHiddenItem = () => {
@@ -81,12 +77,12 @@ export const getStoredVoteCount = () => {
   }
 };
 
-export const hideItem = (id, news) => {
+export const hideItem = (id, news) => (dispatch) => {
   const hide = getHiddenItem();
   hide.push(id);
   localStorage.setItem(StorageConstants.HIDDENITEMS, JSON.stringify(hide));
   const i = news.findIndex((d) => d.objectID === id);
   const newData = [...news];
   newData.splice(i, 1);
-  updateNews(newData);
+  dispatch({ type: 'UpdateNews', payload: newData });
 };
