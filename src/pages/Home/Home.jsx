@@ -134,7 +134,7 @@ export const Home = (props) => {
           ))}
         </tbody>
       </table>
-      <>
+      <div>
         <div className={style.ctn}>
           <div className={style.mlauto}>
             <span className={style.clickable} onClick={() => pageChange(true)}>
