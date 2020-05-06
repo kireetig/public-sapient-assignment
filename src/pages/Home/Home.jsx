@@ -134,18 +134,20 @@ export const Home = (props) => {
           ))}
         </tbody>
       </table>
-      <div className={style.ctn}>
-        <div className={style.mlauto}>
-          <span className={style.clickable} onClick={() => pageChange(true)}>
-            Previous
-          </span>{' '}
-          |
-          <span className={style.clickable} onClick={() => pageChange(false)}>
-            {' '}
-            Next
-          </span>
+      <>
+        <div className={style.ctn}>
+          <div className={style.mlauto}>
+            <span className={style.clickable} onClick={() => pageChange(true)}>
+              Previous
+            </span>{' '}
+            |
+            <span className={style.clickable} onClick={() => pageChange(false)}>
+              {' '}
+              Next
+            </span>
+          </div>
         </div>
-      </div>
+      </>
       <LineChart data={news} />
     </div>
   );
